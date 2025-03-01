@@ -5,7 +5,7 @@ import StudioList from "../components/studio/StudioList";
 const Studio = () => {
   return (
     <Layout>
-      <div className="container mx-auto p-4 max-w-md mt-10">
+      <div className="container mx-auto p-4 mt-10">
         <StudioList />
       </div>
     </Layout>
