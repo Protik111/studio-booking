@@ -18,6 +18,7 @@ import { getDistance } from "geolib";
 import dayjs from "dayjs";
 import studioData from "../../staticData/staticData.json";
 import { Studio } from "../../types/studioTypes";
+import { generateTimeSlots } from "../../utils/generateTimeSlots";
 
 const { Search } = Input;
 const { Title, Text } = Typography;
@@ -34,6 +35,18 @@ const StudioList: React.FC = () => {
   const [bookedSlots, setBookedSlots] = useState<{ [key: string]: string[] }>(
     {}
   );
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (selectedStudio) {
+      const { Open, Close } = selectedStudio.Availability;
+      console.log(
+        "generateTimeSlots(Open, Close)",
+        generateTimeSlots(Open, Close)
+      );
+      setAvailableTimeSlots(generateTimeSlots(Open, Close));
+    }
+  }, [selectedStudio]);
 
   // Get user location
   const { coords } = useGeolocated({
@@ -75,9 +88,6 @@ const StudioList: React.FC = () => {
         return distance <= 10000; // 10 km
       })
     : filteredStudios;
-
-  // Get available time slots for selected studio
-  const availableTimeSlots = selectedStudio?.Availability || [];
 
   // Get booked slots for the selected date
   const bookedTimes = selectedDate ? bookedSlots[selectedDate] || [] : [];
@@ -225,6 +235,7 @@ const StudioList: React.FC = () => {
               <Select
                 placeholder="Select a time slot"
                 onChange={setSelectedTime}
+                value={selectedTime}
               >
                 {(Array.isArray(availableTimeSlots)
                   ? availableTimeSlots
