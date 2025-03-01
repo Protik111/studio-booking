@@ -36,6 +36,7 @@ const StudioList: React.FC = () => {
     {}
   );
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+  const [detailedBookings, setDetailedBookings] = useState<any[]>([]);
 
   useEffect(() => {
     if (selectedStudio) {
@@ -47,6 +48,19 @@ const StudioList: React.FC = () => {
       setAvailableTimeSlots(generateTimeSlots(Open, Close));
     }
   }, [selectedStudio]);
+
+  useEffect(() => {
+    const storedBookings = localStorage.getItem("bookedSlots");
+    if (storedBookings) {
+      setBookedSlots(JSON.parse(storedBookings));
+    }
+
+    // Load detailed bookings as well
+    const storedDetailedBookings = localStorage.getItem("detailedBookings");
+    if (storedDetailedBookings) {
+      setDetailedBookings(JSON.parse(storedDetailedBookings));
+    }
+  }, []);
 
   // Get user location
   const { coords } = useGeolocated({
@@ -114,13 +128,56 @@ const StudioList: React.FC = () => {
       return;
     }
 
+    // Create a booking object with all the required information
+    const bookingDetails = {
+      userInfo: {
+        name: userInfo.name,
+        email: userInfo.email,
+      },
+      studioInfo: {
+        id: selectedStudio?.Id,
+        name: selectedStudio?.Name,
+        type: selectedStudio?.Type,
+        location: {
+          city: selectedStudio?.Location.City,
+          area: selectedStudio?.Location.Area,
+        },
+      },
+      bookingTime: {
+        date: selectedDate,
+        time: selectedTime,
+      },
+    };
+
     // Store booking in local storage
+    // First, let's modify the structure to store complete booking details
     const updatedBookings = { ...bookedSlots };
-    updatedBookings[selectedDate] = [
-      ...(updatedBookings[selectedDate] || []),
-      selectedTime,
-    ];
+
+    // Create a unique booking key (can be improved with a proper ID generation)
+    const bookingKey = `${selectedDate}_${selectedTime}_${selectedStudio?.Id}`;
+
+    // If we don't have an array for this date yet, create one
+    if (!updatedBookings[selectedDate]) {
+      updatedBookings[selectedDate] = [];
+    }
+
+    // Add this time to the list of booked times for this date
+    updatedBookings[selectedDate].push(selectedTime);
+
+    // Store the updated list of booked times
     localStorage.setItem("bookedSlots", JSON.stringify(updatedBookings));
+
+    // Also store the detailed booking information
+    // Get existing bookings detail or initialize empty array
+    const existingDetailedBookings = JSON.parse(
+      localStorage.getItem("detailedBookings") || "[]"
+    );
+    existingDetailedBookings.push(bookingDetails);
+    localStorage.setItem(
+      "detailedBookings",
+      JSON.stringify(existingDetailedBookings)
+    );
+
     setBookedSlots(updatedBookings);
 
     // Success message
@@ -181,7 +238,7 @@ const StudioList: React.FC = () => {
                 <img
                   alt={studio.Name}
                   src={studio.Images[0]}
-                  style={{ height: 150, objectFit: "cover" }}
+                  style={{ height: 50, objectFit: "cover" }}
                 />
               }
             >
