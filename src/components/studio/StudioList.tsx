@@ -12,6 +12,7 @@ import {
   Select,
   message,
   Form,
+  Spin,
 } from "antd";
 import { useGeolocated } from "react-geolocated";
 import { getDistance } from "geolib";
@@ -37,6 +38,7 @@ const StudioList: React.FC = () => {
   );
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [detailedBookings, setDetailedBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (selectedStudio) {
@@ -50,6 +52,15 @@ const StudioList: React.FC = () => {
   }, [selectedStudio]);
 
   useEffect(() => {
+    // Simulate data fetching with a delay
+    const fetchData = async () => {
+      setLoading(true); // Start loading
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
+      setLoading(false); // Stop loading after delay
+    };
+
+    fetchData();
+
     const storedBookings = localStorage.getItem("bookedSlots");
     if (storedBookings) {
       setBookedSlots(JSON.parse(storedBookings));
@@ -191,6 +202,22 @@ const StudioList: React.FC = () => {
     setSelectedTime(null);
     setUserInfo({ name: "", email: "" });
   };
+
+  // Conditional rendering for loader
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spin size="large" tip="Loading studios..." />
+      </div>
+    );
+  }
 
   return (
     <div
