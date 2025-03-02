@@ -13,14 +13,15 @@ const Header: React.FC = () => {
 
         <div className="right_nav_controls self-center max-lg:-mt-8">
           <ul className="flex flex-row items-center gap-2 sm:gap-4 md:gap-4 dark:text-white">
-            <Link to="/bookings" className="text-md dark:text-white">
-              <li className="ml-auto hover:border border-theme px-4 py-1 rounded-full cursor-pointer">
-                <span>Bookings</span>
-              </li>
-            </Link>
             <Link to="/studio" className="text-md dark:text-white">
               <li className="ml-auto hover:border border-theme px-4 py-1 rounded-full cursor-pointer">
                 <span>Studio</span>
+              </li>
+            </Link>
+
+            <Link to="/bookings" className="text-md dark:text-white">
+              <li className="ml-auto hover:border border-theme px-4 py-1 rounded-full cursor-pointer">
+                <span>Bookings</span>
               </li>
             </Link>
           </ul>

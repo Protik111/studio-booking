@@ -73,7 +73,6 @@ const BookingsList: React.FC = () => {
   useEffect(() => {
     let result = [...bookings];
 
-    // Apply search text filter
     if (searchText) {
       const lowerCaseSearch = searchText.toLowerCase();
       result = result.filter(
@@ -84,14 +83,12 @@ const BookingsList: React.FC = () => {
       );
     }
 
-    // Apply type filter
     if (typeFilter) {
       result = result.filter(
         (booking) => booking.studioInfo.type === typeFilter
       );
     }
 
-    // Apply location filter
     if (locationFilter) {
       result = result.filter(
         (booking) =>
@@ -100,7 +97,6 @@ const BookingsList: React.FC = () => {
       );
     }
 
-    // Apply date filter
     if (dateFilter) {
       result = result.filter(
         (booking) => booking.bookingTime.date === dateFilter
@@ -110,7 +106,6 @@ const BookingsList: React.FC = () => {
     setFilteredBookings(result);
   }, [searchText, typeFilter, locationFilter, dateFilter, bookings]);
 
-  // Reset all filters
   const resetFilters = () => {
     setSearchText("");
     setTypeFilter(null);
@@ -118,7 +113,6 @@ const BookingsList: React.FC = () => {
     setDateFilter(null);
   };
 
-  // Sort bookings by date
   const sortedBookings = [...filteredBookings].sort((a, b) => {
     const dateA = dayjs(`${a.bookingTime.date} ${a.bookingTime.time}`);
     const dateB = dayjs(`${b.bookingTime.date} ${b.bookingTime.time}`);

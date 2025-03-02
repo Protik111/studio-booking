@@ -52,11 +52,10 @@ const StudioList: React.FC = () => {
   }, [selectedStudio]);
 
   useEffect(() => {
-    // Simulate data fetching with a delay
     const fetchData = async () => {
-      setLoading(true); // Start loading
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
-      setLoading(false); // Stop loading after delay
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setLoading(false);
     };
 
     fetchData();
@@ -87,7 +86,6 @@ const StudioList: React.FC = () => {
     }
   }, []);
 
-  // Handle booking
   const handleBooking = (studio: Studio) => {
     setSelectedStudio(studio);
     setIsModalVisible(true);
@@ -114,13 +112,10 @@ const StudioList: React.FC = () => {
       })
     : filteredStudios;
 
-  // Get booked slots for the selected date
   const bookedTimes = selectedDate ? bookedSlots[selectedDate] || [] : [];
 
-  // Check if selected time is available
   const isTimeAvailable = (time: string) => !bookedTimes.includes(time);
 
-  // Handle booking submission
   const handleConfirmBooking = () => {
     if (!selectedDate || !selectedTime) {
       message.error("Please select a date and time slot.");
@@ -131,7 +126,6 @@ const StudioList: React.FC = () => {
       return;
     }
 
-    // Check if time is already booked
     if (!isTimeAvailable(selectedTime)) {
       message.error(
         "The selected time slot is not available. Please choose another time."
@@ -139,7 +133,6 @@ const StudioList: React.FC = () => {
       return;
     }
 
-    // Create a booking object with all the required information
     const bookingDetails = {
       userInfo: {
         name: userInfo.name,
@@ -160,26 +153,18 @@ const StudioList: React.FC = () => {
       },
     };
 
-    // Store booking in local storage
-    // First, let's modify the structure to store complete booking details
     const updatedBookings = { ...bookedSlots };
 
-    // Create a unique booking key (can be improved with a proper ID generation)
     const bookingKey = `${selectedDate}_${selectedTime}_${selectedStudio?.Id}`;
 
-    // If we don't have an array for this date yet, create one
     if (!updatedBookings[selectedDate]) {
       updatedBookings[selectedDate] = [];
     }
 
-    // Add this time to the list of booked times for this date
     updatedBookings[selectedDate].push(selectedTime);
 
-    // Store the updated list of booked times
     localStorage.setItem("bookedSlots", JSON.stringify(updatedBookings));
 
-    // Also store the detailed booking information
-    // Get existing bookings detail or initialize empty array
     const existingDetailedBookings = JSON.parse(
       localStorage.getItem("detailedBookings") || "[]"
     );
@@ -191,19 +176,16 @@ const StudioList: React.FC = () => {
 
     setBookedSlots(updatedBookings);
 
-    // Success message
     message.success(
       `Booking confirmed for ${selectedStudio?.Name} on ${selectedDate} at ${selectedTime}`
     );
 
-    // Reset form & close modal
     setIsModalVisible(false);
     setSelectedDate(null);
     setSelectedTime(null);
     setUserInfo({ name: "", email: "" });
   };
 
-  // Conditional rendering for loader
   if (loading) {
     return (
       <div
